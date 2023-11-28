@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Înregistrare</title>
+<meta charset="UTF-8"> 
+</head>
+<body>
+<h2>Creare cont Teamtable</h2>
+<form action="register.php" method="post">
+<label for="email">E-mail:</label>
+<input type="email" id="email" name="email" required><br><br>
+<label for="nume">Nume:</label>
+<input type="text" id="nume" name="nume" required><br><br>
+<label for="pass">Parola:</label>
+<input type="password" id="pass" name="pass" required><br><br>
+Tip cont:<br>
+<input type="radio" id="prof" name="tipcont" value="prof">
+<label for="prof">Profesor</label><br>
+<input type="radio" id="stud" name="tipcont" value="stud" checked="checked">
+<label for="stud">Student</label><br><br>
+<input type="submit" value="Confirmă">
+</form>
+</body>
+</html>

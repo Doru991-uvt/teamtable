@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Adaugare ora</title>
+<meta charset="UTF-8"> 
+</head>
+<body>
+<h2>Adaugare ora</h2>
+<a href="viewtable.php">Anulare</a><br>
+<form action="add.php" method="post">
+<label for="cname">Nume modul:</label>
+<input type="text" id="cname" name="cname" required><br><br>
+<label for="grup">(Sub)grupa:</label>
+<input type="number" id="grup" name="grup" required><br><br>
+<label for="pid">ID profesor</label>
+<input type="number" id="pid" name="pid" required><br><br>
+<input type="checkbox" id="curs" name="curs" value="curs">
+<label for="curs">Curs?</label><br><br>
+<input type="radio" id="si" name="spsi" value="si">
+<label for="si">Saptamani impare</label><br>
+<input type="radio" id="sp" name="spsi" value="sp">
+<label for="sp">Saptamani pare</label><br>
+<input type="radio" id="na" name="spsi" value="na" checked="checked">
+<label for="na">Toate saptamanile</label><br><br>
+ <label for="ziua">Ziua:</label>
+
+<select name="ziua" id="ziua">
+  <option value="0">Luni</option>
+  <option value="1">Marti</option>
+  <option value="2">Miercuri</option>
+  <option value="3">Joi</option>
+  <option value="4">Vineri</option>
+</select><br>
+ <label for="inter">Interval orar:</label>
+<select name="inter" id="inter">
+  <option value="0">8.00-9.30</option>
+  <option value="1">9.40-11.10</option>
+  <option value="2">11.20-12.50</option>
+  <option value="3">13.00-14.30</option>
+  <option value="4">14.40-16.10</option>
+  <option value="5">16.20-17.50</option>
+  <option value="6">18.00-19.30</option>
+  <option value="7">19.40-21.10</option>
+</select><br>
+<input type="submit" value="Confirmă">
+</form>
+</body>
+</html>
