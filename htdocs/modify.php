@@ -1,3 +1,7 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="style.css">
 <title>Orar</title>
 <meta charset="UTF-8"> 
 </head>
@@ -33,11 +37,18 @@ $user = $user -> fetch();
 <?php
 if(isset($_GET['id'])){
 echo "<a href=move.php?id=" . $_GET['id'] . "&to=>Anulați ora</a><br>";
-echo "<a href=reset.php?id=" . $_GET['id'] . ">Restaurare oră</a>";
+if($user['tip_cont']!='stud'){
+echo "<a href=reset.php?id=" . $_GET['id'] . ">Restaurare oră</a><br>";
+echo "<a href=reloc.php?id=" . $_GET['id'] . ">Schimbă locația</a>";
+}
+else
+{
+echo "<a href=reset.php?id=" . $_GET['id'] . "&uid=" . $user['uid'] . ">Restaurare oră</a>";
+}
 echo "<hr>";
 }
 ?>
-<table border="1">
+<table>
 <?php
 $zile = array("Lun", "Mar", "Mie", "Joi", "Vin");
 $intervale = array("8.00-9.30", "9.40-11.10", "11.20-12.50", "13.00-14.30", "14.40-16.10", "16.20-17.50", "18.00-19.30", "19.40-21.10");
@@ -45,12 +56,24 @@ $pdo = new PDO("mysql:host=localhost;dbname=teamtable", 'root', 'toor');
 $ore = $pdo->query("SELECT * FROM courses");
 $textore = array();
 $pozitii = array();
+$gr = $pdo->query("SELECT grupa FROM grupe WHERE sid='" . $user['uid'] . "'");
+$ora_t=null;
+if(isset($_GET['id']))
+{
+	$ores=$pdo->query("SELECT * FROM courses WHERE cid='" . $_GET['id'] . "'");
+	$ora_t=$ores->fetch();
+}
+$grupa = 0;
+if($gr->rowCount() > 0)
+{
+	$grupa=$gr->fetch()['grupa'];
+}
 foreach($ore as $ora){
 	$pozitii = array($ora['inter_orar'], $ora['grup']);
-	$text = $ora['cname'];
+	$text = $ora['cname'] . " - " . $ora['loc'];
 	if($ora['spsi'] != 'na')
 	{
-		$text = $text . "/" . $ora['spsi'];
+		$text = $text . " (" . strtoupper($ora['spsi']) . ")";
 	}
 	if($_GET['action']=='delete')
 	{
@@ -58,9 +81,16 @@ foreach($ore as $ora){
 	}
 	if($_GET['action']=='move')
 	{
-		if(!isset($_GET['id']) && ($user['uid'] == $ora['pid']))
+		if(!isset($_GET['id']) && (($user['tip_cont'] != 'stud' && $user['uid'] == $ora['pid']) || ($user['tip_cont'] == 'stud' && $grupa == $ora['grup'] && $ora['curs'] == 0)))
 		{
 			$text = "<a href='modify.php?action=move&id=" . $ora['cid'] . "'>" . $text . "</a>";
+		}
+		else if (isset($ora_t) && $user['tip_cont'] == 'stud')
+		{
+			if($ora['cname'] == $ora_t['cname'] && $ora['cid'] != $ora_t['cid'])
+			{
+				$text = "<a href='studmove.php?id=" . $ora['cid'] . "&to=" . $ora_t['grup'] ."'>" . $text . "</a>";
+			}
 		}
 	}
 	if(isset($pozitii[0])){
@@ -75,7 +105,7 @@ foreach($ore as $ora){
 	}
 }
 $grup=0;
-if(isset($_GET['id']))
+if(isset($_GET['id']) && $user['tip_cont'] != 'stud')
 {
 	$ore2 = $pdo->query("SELECT * FROM courses WHERE cid=" . $_GET['id']);
 	$ora2 = $ore2->fetch();

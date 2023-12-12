@@ -6,6 +6,7 @@ $pid=htmlspecialchars($_POST['pid']);
 $spsi=htmlspecialchars($_POST['spsi']);
 $z=htmlspecialchars($_POST['ziua']);
 $o=htmlspecialchars($_POST['inter']);
+$loc=htmlspecialchars($_POST['loc']);
 $inter=$z*8+$o;
 if(!isset($_POST['curs']))
 {
@@ -22,8 +23,8 @@ if($num_rows > 0)
 }
 else
 {
-	$newc = $pdo->prepare("INSERT INTO courses (pid, cname, inter_orar, grup, curs) VALUES (:pid, :cname, :inter_orar, :grup, :curs)");
-	$newc->execute(['pid' => $pid, 'cname' => $cname, 'inter_orar' => $inter, 'grup' => $grup, 'curs' => $curs]);
+	$newc = $pdo->prepare("INSERT INTO courses (pid, cname, inter_orar, grup, curs, spsi, loc) VALUES (:pid, :cname, :inter_orar, :grup, :curs, :spsi, :loc)");
+	$newc->execute(['pid' => $pid, 'cname' => $cname, 'inter_orar' => $inter, 'grup' => $grup, 'curs' => $curs, 'spsi' => $spsi, 'loc' => $loc]);
 	header( "refresh:0; url=viewtable.php" );
 }
 ?>

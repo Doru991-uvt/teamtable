@@ -16,9 +16,16 @@ if($num_rows > 0)
 }
 else
 {
-	$newuser = $pdo->prepare("INSERT INTO users (email, nume, tip_cont, passwd) VALUES (:email, :nume, :tip_cont, :passwd)");
-	$newuser->execute(['email' => $email, 'nume' => $nume, 'tip_cont' => $tipc, 'passwd' => $pass]);
-	echo '<h3>Cont creat cu succes. Conectati-va.</h3>';
-	header( "refresh:2; url=login.html" );
+	$code = rand();
+	$del = $pdo->query("DELETE FROM pending WHERE email = '" . $email . "';");
+	$newuser = $pdo->prepare("INSERT INTO pending (email, nume, tip_cont, passwd, code) VALUES (:email, :nume, :tip_cont, :passwd, :code)");
+	$newuser->execute(['email' => $email, 'nume' => $nume, 'tip_cont' => $tipc, 'passwd' => $pass, 'code' => $code]);
+	$to = $email;
+	$subject = "Activare cont";
+	$txt = "Codul de activarea contului este " . $code;
+	$headers = "From: dorurogoveanu123@gmail.com";
+	mail($to,$subject,$txt,$headers);
+	echo '<h3>Va rugăm activați-vă contul.</h3>';
+	header( "refresh:3; url=confirm.html" );
 }
 ?>

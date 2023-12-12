@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 28, 2023 at 04:46 AM
+-- Generation Time: Dec 12, 2023 at 11:42 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -34,10 +34,10 @@ CREATE TABLE `courses` (
   `inter_orar` int(11) NOT NULL,
   `grup` int(11) NOT NULL,
   `curs` tinyint(1) NOT NULL DEFAULT 0,
-  `spsi` set('si','sp','na') NOT NULL DEFAULT 'na'
+  `spsi` set('si','sp','na') NOT NULL DEFAULT 'na',
+  `loc` varchar(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- --------------------------------------------------------
 
 --
 -- Table structure for table `grupe`
@@ -49,7 +49,6 @@ CREATE TABLE `grupe` (
   `grupa` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- --------------------------------------------------------
 
 --
 -- Table structure for table `modificari`
@@ -62,10 +61,40 @@ CREATE TABLE `modificari` (
   `toint` int(11) DEFAULT NULL,
   `start` date NOT NULL DEFAULT current_timestamp(),
   `fin` date NOT NULL DEFAULT current_timestamp(),
-  `global` tinyint(1) NOT NULL DEFAULT 1
+  `global` tinyint(1) NOT NULL DEFAULT 1,
+  `created` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
+
+--
+-- Table structure for table `modificari_loc`
+--
+
+CREATE TABLE `modificari_loc` (
+  `mid` int(11) NOT NULL,
+  `uid` int(11) NOT NULL,
+  `cid` int(11) NOT NULL,
+  `toloc` varchar(20) NOT NULL,
+  `start` date NOT NULL DEFAULT current_timestamp(),
+  `fin` date NOT NULL,
+  `created` datetime NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `pending`
+--
+
+CREATE TABLE `pending` (
+  `id` int(11) NOT NULL,
+  `email` varchar(40) NOT NULL,
+  `nume` varchar(50) NOT NULL,
+  `tip_cont` set('prof','stud','admin') NOT NULL,
+  `passwd` int(11) NOT NULL,
+  `code` varchar(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Table structure for table `sessions`
@@ -79,8 +108,6 @@ CREATE TABLE `sessions` (
   `createdate` date NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- --------------------------------------------------------
-
 --
 -- Table structure for table `users`
 --
@@ -90,15 +117,16 @@ CREATE TABLE `users` (
   `email` varchar(40) NOT NULL,
   `nume` varchar(40) NOT NULL,
   `tip_cont` set('prof','stud','admin') NOT NULL DEFAULT 'stud',
-  `passwd` varchar(20) NOT NULL
+  `passwd` varchar(20) NOT NULL,
+  `last_check` datetime NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`uid`, `email`, `nume`, `tip_cont`, `passwd`) VALUES
-(1, 'root@teamtable.ro', 'root', 'admin', 'root');
+INSERT INTO `users` (`uid`, `email`, `nume`, `tip_cont`, `passwd`, `last_check`) VALUES
+(1, 'root@teamtable.ro', 'root', 'admin', 'root', '2023-12-12 12:37:53'),
 
 --
 -- Indexes for dumped tables
@@ -121,6 +149,18 @@ ALTER TABLE `grupe`
 --
 ALTER TABLE `modificari`
   ADD PRIMARY KEY (`mid`);
+
+--
+-- Indexes for table `modificari_loc`
+--
+ALTER TABLE `modificari_loc`
+  ADD PRIMARY KEY (`mid`);
+
+--
+-- Indexes for table `pending`
+--
+ALTER TABLE `pending`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `sessions`
@@ -155,6 +195,18 @@ ALTER TABLE `grupe`
 --
 ALTER TABLE `modificari`
   MODIFY `mid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
+
+--
+-- AUTO_INCREMENT for table `modificari_loc`
+--
+ALTER TABLE `modificari_loc`
+  MODIFY `mid` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
+
+--
+-- AUTO_INCREMENT for table `pending`
+--
+ALTER TABLE `pending`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
 
 --
 -- AUTO_INCREMENT for table `sessions`

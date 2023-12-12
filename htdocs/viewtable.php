@@ -1,7 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
 <title>Orar</title>
-<meta charset="UTF-8"> 
+<meta charset="UTF-8">
+<link rel="stylesheet" href="style.css"> 
 </head>
 <body>
+<script>
+function selectSP()
+{
+var elements = document.querySelectorAll('.sp');
+elements.forEach(element => {
+  element.style.removeProperty('color');
+});
+elements = document.querySelectorAll('.si');
+elements.forEach(element => {
+  element.style.color='LightGrey';
+});
+}
+function selectSI()
+{
+var elements = document.querySelectorAll('.si');
+elements.forEach(element => {
+  element.style.removeProperty('color');
+});
+elements = document.querySelectorAll('.sp');
+elements.forEach(element => {
+  element.style.color='LightGrey';
+});
+}
+</script>
 <?php
 $token = "";
 if(!isset($_COOKIE['session'])) {
@@ -25,8 +53,11 @@ if($num_rows == 0)
 $session = $result->fetch();
 $user = $pdo->query("SELECT * FROM users WHERE uid='" . $session['uid'] . "';");
 $user = $user -> fetch();
+$viewed=$pdo->query("UPDATE users SET last_check = CURRENT_TIMESTAMP WHERE uid = '" . $user['uid'] . "';");
+$update=$pdo->query("DELETE FROM modificari WHERE fin < CURRENT_TIMESTAMP;");
+$update=$pdo->query("DELETE FROM modificari_loc WHERE fin < CURRENT_TIMESTAMP;");
 ?>
-<h1>TeamTable (Demo)</h1>
+<h1>TeamTable</h1>
 <h2>Orarul meu</h2>
 <a href="/dashboard.php">Înapoi la dashboard</a>
 <hr>
@@ -34,17 +65,24 @@ $user = $user -> fetch();
 if($user['tip_cont']=='admin')
 {
 	echo "<a href='add.html'>Adaugă oră</a><br>";
-	echo "<a href='modify.php?action=delete'>Șterge oră</a>";
-	echo "<a href='modify.php?action=move'>Reprogramează oră</a><br>";
+	echo "<a href='modify.php?action=delete'>Șterge oră</a><br>";
+	echo "<a href='modify.php?action=move'>Modifică oră</a><br>";
 	echo "<hr>";
 }
 if($user['tip_cont']=='prof')
+{
+	echo "<a href='modify.php?action=move'>Modifică oră</a><br>";
+	echo "<hr>";
+}
+if($user['tip_cont']=='stud')
 {
 	echo "<a href='modify.php?action=move'>Reprogramează oră</a><br>";
 	echo "<hr>";
 }
 ?>
-<table border="1">
+Mod vizualizare<br>
+<button onclick="selectSI()">Săptămâni impare</button>&ensp;<button onclick="selectSP()">Săptămâni pare</button><br>
+<table>
 <?php
 $zile = array("Lun", "Mar", "Mie", "Joi", "Vin");
 $intervale = array("8.00-9.30", "9.40-11.10", "11.20-12.50", "13.00-14.30", "14.40-16.10", "16.20-17.50", "18.00-19.30", "19.40-21.10");
@@ -55,17 +93,32 @@ $pozitii = array();
 foreach($ore as $ora){
 	$pozitii = array($ora['inter_orar'], $ora['grup']);
 	$text = $ora['cname'];
-	$modif = $pdo->query("SELECT * FROM modificari WHERE cid = '" . $ora['cid'] . "';");
+	$modif = $pdo->query("SELECT * FROM modificari WHERE global = 1 AND cid = '" . $ora['cid'] . "';");
+	$modifloc = $pdo->query("SELECT * FROM modificari_loc WHERE cid = '" . $ora['cid'] . "';");
+	if($modifloc->rowCount() > 0)
+	{
+		$text = $text . " - " . $modifloc->fetch()['toloc'];
+	}
+	else
+	{
+		$text = $text . " - " . $ora['loc'];
+	}
 	if($ora['spsi'] != 'na')
 	{
-		$text = $text . "/" . $ora['spsi'];
+		$text = "<p class = " . $ora['spsi'] . ">" . $text . " (" . strtoupper($ora['spsi']) . ")</p>";
 	}
 	if($modif->rowCount() > 0)
 	{
 		$pozitii[0]=$modif->fetch()['toint'];
-		$text = "<font color='red'>" . $text . "</font>";
+		$text = "<i class = 'modif'>" . $text . "</i>";
 	}
-	if(isset($pozitii[0])){
+	$modifpers = $pdo->query("SELECT * FROM modificari WHERE global = 0 AND cid = '" . $ora['cid'] . "' AND uid = '" . $user['uid'] . "';");
+	if($modifpers->rowCount() > 0)
+	{
+		$pozitii[1]=$modifpers->fetch()['toint'];
+		$text = "<i class = 'modif_p'>" . $text . "</i>";
+	}
+	if(isset($pozitii[0]) && isset($pozitii[1])){
 	$textore[$pozitii[0]][$pozitii[1]] = $text;
 	if($ora['curs']==1)
 	{

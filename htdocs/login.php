@@ -4,7 +4,12 @@ $email=htmlspecialchars($_POST['email']);
 $pass=htmlspecialchars($_POST['pass']);
 
 $pdo = new PDO("mysql:host=localhost;dbname=teamtable", 'root', 'toor');
-
+$result = $pdo->query("SELECT * FROM pending WHERE email='" . $email . "';");
+if($result->rowCount() != 0)
+{
+	echo '<h3>Contul nu este activat...</h3>';
+	header( "refresh:2; url=confirm.html" ); 
+}
 $result = $pdo->query("SELECT uid FROM users WHERE email='" . $email . "' AND passwd='" . $pass . "';");
 $num_rows = $result->rowCount();
 if($num_rows == 0)

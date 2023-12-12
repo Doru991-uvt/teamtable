@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
+<link rel="stylesheet" href="style.css">
 <title>Confirmați mutarea</title>
 <meta charset="UTF-8"> 
 </head>
